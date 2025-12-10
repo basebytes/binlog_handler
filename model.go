@@ -1,6 +1,8 @@
 package binlog_handler
 
 import (
+	"slices"
+
 	"github.com/basebytes/binlog"
 	"github.com/basebytes/interceptor"
 	"github.com/sirupsen/logrus"
@@ -22,4 +24,19 @@ type ContextGenerator[V any] func(*binlog.Event, *logrus.Logger) (interceptor.Co
 type Handler interface {
 	Name() string
 	Handle(event *binlog.Event)
+}
+
+type Updates []string
+
+func (u Updates) IsUpdated(column string) bool {
+	return slices.Contains[[]string, string](u, column)
+}
+
+func (u Updates) Ignore(expected []string) bool {
+	for _, exp := range expected {
+		if slices.Contains[[]string, string](u, exp) {
+			return false
+		}
+	}
+	return true
 }
