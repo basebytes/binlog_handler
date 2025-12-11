@@ -57,7 +57,7 @@ func (h *GeneralHandler[V]) Handle(event *binlog.Event) {
 }
 
 func (h *GeneralHandler[V]) prepare(event *binlog.Event) (chain *interceptor.Chain[V], ctx interceptor.Context[V], ok bool) {
-	if chain, ok = h.chains[h.key(event.Schema(), event.Table())]; ok {
+	if chain, ok = h.chains[h.key(event.DB(), event.Table())]; ok {
 		ctx, ok = h.generator(event, h.logger)
 	}
 	return
